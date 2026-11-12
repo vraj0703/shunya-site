@@ -1,0 +1,57 @@
+/* Waitlist pages for Shunya Systems and tantr. One sheet, two brands: a page sets
+   data-brand on <html> and the accent follows. Dark, two columns, nothing fetched. */
+:root {
+  --bg: #050505; --ink: #f5f3ee; --soft: #8e8b84; --line: #2a2926; --chip: #171614;
+  --accent: #d9a441; --accent-2: #f3d58a; --on-accent: #14110a;
+  --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Inter, Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+:root[data-brand="tantr"] { --accent: #ff5a36; --accent-2: #ffb199; --on-accent: #190803; }
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--sans);
+  -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+a { color: inherit; }
+.page { min-height: 100dvh; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; padding: 20px; }
+.copy { display: flex; flex-direction: column; padding: 0 clamp(12px, 3.2vw, 46px); min-width: 0; }
+.top { display: flex; align-items: center; justify-content: space-between; height: 44px; }
+.brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 650; letter-spacing: -0.01em; font-size: 18px; text-decoration: none; }
+.brand svg { width: 24px; height: 24px; color: var(--accent); }
+.pill-link { background: var(--chip); border-radius: 12px; padding: 10px 16px; font-size: 15px; text-decoration: none; transition: background .15s; }
+.pill-link:hover, .pill-link:focus-visible { background: #24221f; }
+.hero { margin: auto 0; padding: 48px 0; max-width: 560px; }
+.badge { display: inline-block; background: var(--chip); color: #b9b5ac; border-radius: 10px; padding: 7px 10px; font-size: 15px; font-weight: 550; letter-spacing: -0.01em; }
+h1 { font-size: clamp(42px, 6.1vw, 68px); line-height: 1.02; letter-spacing: -0.045em; font-weight: 550; margin: 18px 0 20px; }
+h1 em { font-style: normal; color: var(--accent); }
+.lede { color: var(--soft); font-size: clamp(16px, 1.45vw, 18px); line-height: 1.35; margin: 0 0 28px; max-width: 30em; }
+form.join { display: flex; align-items: center; gap: 6px; max-width: 420px; border: 1px solid var(--line); border-radius: 16px; padding: 5px; background: #0b0b0a; transition: border-color .15s; }
+form.join:focus-within { border-color: var(--accent); }
+form.join input[type=email] { flex: 1; min-width: 0; background: transparent; border: 0; outline: 0; color: var(--ink); font: inherit; font-size: 16px; padding: 10px 12px; }
+form.join input::placeholder { color: #6b6862; }
+form.join button { border: 0; border-radius: 11px; background: var(--ink); color: #0a0a0a; font: inherit; font-size: 16px; font-weight: 550; padding: 10px 26px; cursor: pointer; transition: background .15s, transform .05s; }
+form.join button:hover { background: var(--accent-2); }
+form.join button:active { transform: translateY(1px); }
+form.join button[disabled] { opacity: .6; cursor: progress; }
+.hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+.note { min-height: 22px; margin: 14px 2px 0; font-size: 14.5px; color: var(--soft); }
+.note[data-kind="ok"] { color: var(--accent-2); }
+.note[data-kind="err"] { color: #ff8f7a; }
+.facts { display: flex; flex-wrap: wrap; gap: 8px; margin: 26px 0 0; padding: 0; list-style: none; }
+.facts li { border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; font-size: 13.5px; color: #b9b5ac; }
+.foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; color: var(--soft); font-size: 14.5px; height: 44px; }
+.foot nav { display: flex; gap: 16px; }
+.foot a { text-decoration: none; }
+.foot a:hover, .foot a:focus-visible { color: var(--ink); }
+.panel { position: relative; border-radius: 22px; overflow: hidden; background: #000; min-height: 320px; }
+.panel canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 8px; }
+form.join input:focus-visible { outline: 0; }
+.prose { max-width: 680px; margin: 0 auto; padding: 40px 24px 80px; line-height: 1.55; color: #d2cfc7; }
+.prose h1 { font-size: 34px; letter-spacing: -0.03em; }
+.prose h2 { font-size: 19px; margin-top: 30px; color: var(--ink); }
+@media (max-width: 860px) {
+  .page { grid-template-columns: 1fr; grid-template-rows: auto minmax(260px, 38vh); padding: 14px; }
+  .copy { padding: 0 6px; }
+  .hero { padding: 40px 0 34px; }
+  .foot { height: auto; padding: 14px 0 6px; flex-wrap: wrap; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
