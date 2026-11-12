@@ -16,8 +16,14 @@ person. In PostHog: Activity (events) filtered to `waitlist_joined`, or People.
 
 Try it: `python -m http.server 8080` in this folder, open http://localhost:8080/ and /tantr/.
 
-Deploy to a preview channel (not the live site): `firebase hosting:channel:deploy waitlist --expires 7d --project <project>`.
-The live address is Vishal's decision.
+Deploy to a preview channel (not a live site), once, from this folder on the pc:
+
+    powershell -File tools\write-config.ps1
+    firebase hosting:sites:create shunya-waitlist --project tantr-app     # first time only
+    firebase hosting:channel:deploy waitlist --expires 7d --project tantr-app
+
+`firebase.json` names the site `shunya-waitlist`, so nothing here can land on the portfolio's
+site. The live address (a domain, the live channel) is Vishal's decision.
 
 With an ad blocker that stops PostHog the signup still arrives on tantr's road, but it is then
 missing from PostHog; forwarding collect submissions from the server to the logger closes that.
