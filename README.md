@@ -10,36 +10,29 @@ project's public client token: `distinct_id` is the address, properties are `ema
 (`shunya` | `tantr`), `page`, `referrer` and any `utm_*`, and `$set.email` puts the address on the
 person. In PostHog: Activity (events) filtered to `waitlist_joined`, or People.
 
-`config.js` holds the token and is **not** in the repo. Write it before serving or deploying:
+`config.js` holds the token and is **not** in the repo. To try the site on the pc, write it first:
 
     powershell -File tools\write-config.ps1     # on the pc, from .secret\logger.env
 
 Try it: `python -m http.server 8080` in this folder, open http://localhost:8080/ and /tantr/.
 
-Deploy to a preview channel (not a live site), once, from this folder on the pc:
+## Hosting: Cloudflare Pages
 
-    powershell -File tools\write-config.ps1
-    firebase hosting:sites:create shunya-waitlist --project tantr-app     # first time only
-    firebase hosting:channel:deploy waitlist --expires 7d --project tantr-app
+Cloudflare builds and deploys from this repository. A push to `main` goes live; a pull request
+gets a preview URL that Cloudflare comments on the PR. `.github/workflows/deploy.yml` runs the
+end-to-end test and checks the build beside it.
 
-`firebase.json` names the site `shunya-waitlist`, so nothing here can land on the portfolio's
-site. The live address (a domain, the live channel) is Vishal's decision.
+One-time setup in the Cloudflare dashboard (Vishal's hand):
 
-With an ad blocker that stops PostHog the signup still arrives on tantr's road, but it is then
-missing from PostHog; forwarding collect submissions from the server to the logger closes that.
+1. Workers & Pages > Create > Pages > Connect to Git > `vraj0703/shunya-site`, production branch `main`.
+2. Build command `python3 tools/build.py`, build output directory `dist`, no framework preset.
+3. Settings > Variables and secrets: `POSTHOG_TOKEN` = the PostHog project token (`phc_...`), for
+   Production and Preview. Optional `POSTHOG_HOST`.
+4. Custom domains > Set up a domain > `shunya.systems` (and `www.shunya.systems`). The zone is
+   already on Cloudflare, so the DNS record and the certificate are created for you.
 
-## Pipeline
+`tools/build.py` copies only the pages and assets into `dist/`, writes `config.js` from those
+variables and a `_headers` file. It refuses a token that is not a `phc_` project token.
 
-`.github/workflows/deploy.yml`, the portfolio's shape: every pull request runs the end-to-end test
-and gets a preview URL (commented on the PR); a push to `main` deploys the live channel of the
-hosting site `shunya-waitlist` in project `tantr-app`. One-time setup, Vishal's hand, on the pc:
-
-    firebase hosting:sites:create shunya-waitlist --project tantr-app
-    firebase init hosting:github          # choose this repo; it creates the service account and
-                                          # stores it as a secret; rename it to FIREBASE_SERVICE_ACCOUNT
-    gh secret set POSTHOG_TOKEN -R vraj0703/shunya-site     # paste the phc_ project token
-    gh variable set POSTHOG_HOST -R vraj0703/shunya-site -b https://us.i.posthog.com
-
-Until the two secrets exist the test runs and the preview and deploy jobs skip themselves.
-The domain: Firebase console > Hosting > shunya-waitlist > Add custom domain > shunya.systems,
-then the DNS records it shows, at the registrar.
+Known limit: with an ad blocker that stops PostHog the signup still arrives on tantr's road, but
+it is then missing from PostHog until the server forwards submissions (tantr-app PR 12).

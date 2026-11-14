@@ -1,14 +1,10 @@
-name: Test & Deploy
+name: Test
 
-# The waitlist pages, shipped to Firebase Hosting (site shunya-waitlist, project tantr-app), the
-# same shape as the portfolio's pipeline:
-# - test: the end-to-end test against a fake capture endpoint (both pages, both roads).
-# - preview: on a pull request, a temporary channel pr-<number>, its URL commented on the PR.
-# - deploy: on a push to main only, the live channel. `needs: test`, so a red test stops a release.
-#
-# config.js is not in the repo: it is written here from the repository secret POSTHOG_TOKEN (the
-# project's public client token) and the variable POSTHOG_HOST. Without the secrets the preview and
-# deploy jobs skip themselves and say so; the test still runs.
+# The waitlist pages are hosted on Cloudflare Pages, which builds and deploys from this repository
+# by itself: every push to main goes live at shunya.systems, and every pull request gets its own
+# preview URL, commented on the PR by Cloudflare. This workflow is the gate beside it: the
+# end-to-end test (both pages, both roads, against a fake endpoint) and a check that the build
+# Cloudflare will run still works. Keep main protected on this check so a red test cannot ship.
 
 on:
   push:
@@ -25,57 +21,6 @@ jobs:
         with: { python-version: "3.12" }
       - run: pip install -q "playwright>=1.50" && playwright install --with-deps chromium
       - run: python test/e2e.py
-
-  preview:
-    needs: test
-    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
-    runs-on: ubuntu-latest
-    permissions: { checks: write, contents: read, pull-requests: write }
-    env:
-      HAS_SECRETS: ${{ secrets.FIREBASE_SERVICE_ACCOUNT != '' && secrets.POSTHOG_TOKEN != '' }}
-    steps:
-      - uses: actions/checkout@v4
-      - name: Secrets present?
-        if: env.HAS_SECRETS != 'true'
-        run: echo "::warning::FIREBASE_SERVICE_ACCOUNT or POSTHOG_TOKEN is not set; no preview"
-      - name: Write config.js
-        if: env.HAS_SECRETS == 'true'
-        env:
-          POSTHOG_TOKEN: ${{ secrets.POSTHOG_TOKEN }}
-          POSTHOG_HOST: ${{ vars.POSTHOG_HOST }}
-        run: python tools/write_config.py
-      - name: Deploy preview to Firebase
-        if: env.HAS_SECRETS == 'true'
-        uses: FirebaseExtended/action-hosting-deploy@v0
-        with:
-          repoToken: ${{ secrets.GITHUB_TOKEN }}
-          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-          channelId: pr-${{ github.event.pull_request.number }}
-          expires: 7d
-          projectId: tantr-app
-
-  deploy:
-    needs: test
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    runs-on: ubuntu-latest
-    env:
-      HAS_SECRETS: ${{ secrets.FIREBASE_SERVICE_ACCOUNT != '' && secrets.POSTHOG_TOKEN != '' }}
-    steps:
-      - uses: actions/checkout@v4
-      - name: Secrets present?
-        if: env.HAS_SECRETS != 'true'
-        run: echo "::warning::FIREBASE_SERVICE_ACCOUNT or POSTHOG_TOKEN is not set; nothing deployed"
-      - name: Write config.js
-        if: env.HAS_SECRETS == 'true'
-        env:
-          POSTHOG_TOKEN: ${{ secrets.POSTHOG_TOKEN }}
-          POSTHOG_HOST: ${{ vars.POSTHOG_HOST }}
-        run: python tools/write_config.py
-      - name: Deploy to Firebase
-        if: env.HAS_SECRETS == 'true'
-        uses: FirebaseExtended/action-hosting-deploy@v0
-        with:
-          repoToken: ${{ secrets.GITHUB_TOKEN }}
-          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-          channelId: live
-          projectId: tantr-app
+      - name: The Pages build works
+        env: { POSTHOG_TOKEN: phc_ci_check }
+        run: python tools/build.py && test -f dist/index.html -a -f dist/tantr/index.html -a -f dist/config.js -a -f dist/_headers
