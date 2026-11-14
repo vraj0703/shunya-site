@@ -16,7 +16,7 @@ import sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 DIST = ROOT / "dist"
-PAGES = ["index.html", "privacy.html", "tantr", "assets"]
+PAGES = ["index.html", "privacy.html", "tantr", "logo", "assets"]
 HEADERS = """/*
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
