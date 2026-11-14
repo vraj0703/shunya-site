@@ -23,4 +23,4 @@ jobs:
       - run: python test/e2e.py
       - name: The Pages build works
         env: { POSTHOG_TOKEN: phc_ci_check }
-        run: python tools/build.py && test -f dist/index.html -a -f dist/tantr/index.html -a -f dist/config.js -a -f dist/_headers -a -f dist/404.html && python3 -c "import json,re,pathlib; json.loads(re.sub(r'^\s*//.*$', '', pathlib.Path('wrangler.jsonc').read_text(), flags=re.M))"
+        run: python tools/build.py && test -f dist/index.html -a -f dist/tantr/index.html -a -f dist/logo/index.html -a -f dist/logo/shunya-mark.svg -a -f dist/config.js -a -f dist/_headers -a -f dist/404.html && python3 -c "import json,re,pathlib; json.loads(re.sub(r'^\s*//.*$', '', pathlib.Path('wrangler.jsonc').read_text(), flags=re.M))"

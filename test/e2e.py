@@ -75,5 +75,13 @@ with sync_playwright() as p:
         page.set_viewport_size({"width": 390, "height": 844}); page.wait_for_timeout(200)
         check(f"{site}: no sideways scroll at 390 wide", page.evaluate("document.documentElement.scrollWidth <= 390"))
         page.screenshot(path=str(ROOT / "test" / f"{site}-phone.png")); seen.clear(); envelopes.clear(); ctx.close()
+    page = b.new_page(); errors = []; page.on("pageerror", lambda e: errors.append(str(e)))
+    page.goto("http://127.0.0.1:8767/logo/")
+    check("logo: the page shows the mark and its three files answer", page.locator("h1").inner_text().startswith("A zero") and page.locator("svg.mk").count() >= 10
+          and all(page.request.get(f"http://127.0.0.1:8767/logo/{a.get_attribute('href')[2:]}").ok and "<svg" in page.request.get(f"http://127.0.0.1:8767/logo/{a.get_attribute('href')[2:]}").text() for a in page.locator("a[download]").all())
+          and page.locator("a[download]").count() == 3 and not errors)
+    page.set_viewport_size({"width": 390, "height": 844}); page.wait_for_timeout(200)
+    check("logo: no sideways scroll at 390 wide", page.evaluate("document.documentElement.scrollWidth <= 390"))
+    page.screenshot(path=str(ROOT / "test" / "logo-phone.png"), full_page=True); page.close()
     b.close()
 print("ALL OK" if ok else "FAILED"); sys.exit(0 if ok else 1)
