@@ -16,23 +16,22 @@ person. In PostHog: Activity (events) filtered to `waitlist_joined`, or People.
 
 Try it: `python -m http.server 8080` in this folder, open http://localhost:8080/ and /tantr/.
 
-## Hosting: Cloudflare Pages
+## Hosting: Cloudflare Workers (static assets)
 
-Cloudflare builds and deploys from this repository. A push to `main` goes live; a pull request
-gets a preview URL that Cloudflare comments on the PR. `.github/workflows/deploy.yml` runs the
-end-to-end test and checks the build beside it.
+The Worker `shunya-systems-site` is connected to this repository: a push to `main` builds and goes
+live; a pull request gets a preview. `wrangler.jsonc` tells it to serve `dist/`, which
+`tools/build.py` makes (the pages and assets only, `config.js` from the build variables, a
+`_headers` file and a 404 page). `.github/workflows/deploy.yml` runs the end-to-end test and
+checks the build beside it.
 
-One-time setup in the Cloudflare dashboard (Vishal's hand):
+One-time setup in the Cloudflare dashboard (Vishal's hand), Worker > Settings:
 
-1. Workers & Pages > Create > Pages > Connect to Git > `vraj0703/shunya-site`, production branch `main`.
-2. Build command `python3 tools/build.py`, build output directory `dist`, no framework preset.
-3. Settings > Variables and secrets: `POSTHOG_TOKEN` = the PostHog project token (`phc_...`), for
-   Production and Preview. Optional `POSTHOG_HOST`.
-4. Custom domains > Set up a domain > `shunya.systems` (and `www.shunya.systems`). The zone is
-   already on Cloudflare, so the DNS record and the certificate are created for you.
+1. Build: build command `python3 tools/build.py`, deploy command `npx wrangler deploy`.
+2. Build > Variables and secrets: `POSTHOG_TOKEN` = the PostHog project token (`phc_...`).
+3. Domains & Routes > Add > Custom domain > `shunya.systems` (and `www.shunya.systems`). The zone
+   is on Cloudflare, so the DNS record and the certificate are created for you.
 
-`tools/build.py` copies only the pages and assets into `dist/`, writes `config.js` from those
-variables and a `_headers` file. It refuses a token that is not a `phc_` project token.
+The build refuses a token that is not a `phc_` project token.
 
 Known limit: with an ad blocker that stops PostHog the signup still arrives on tantr's road, but
 it is then missing from PostHog until the server forwards submissions (tantr-app PR 12).

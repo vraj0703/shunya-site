@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Builds the site into dist/ for Cloudflare Pages: the pages and assets only (no tools, tests or
+"""Builds the site into dist/ for Cloudflare (Workers static assets, see wrangler.jsonc): the pages and assets only (no tools, tests or
 README), plus config.js written from the environment and a _headers file.
 
-  POSTHOG_TOKEN   the PostHog project token (phc_...), set in the Pages project's settings
+  POSTHOG_TOKEN   the PostHog project token (phc_...), set in the Worker's build variables
   POSTHOG_HOST    optional, default https://us.i.posthog.com
   TANTR_SERVER    optional; empty string switches tantr's road off, unset keeps https://tantr.app
 
@@ -29,6 +29,13 @@ HEADERS = """/*
 """
 
 
+NOT_FOUND = """<!doctype html>
+<html lang="en" data-brand="shunya"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Not found: Shunya Systems</title><link rel="icon" href="/assets/shunya.svg" type="image/svg+xml"><link rel="stylesheet" href="/assets/site.css"></head>
+<body><main class="prose"><h1>Nothing here</h1><p>That page does not exist. <a href="/">Back to Shunya Systems</a>.</p></main></body></html>
+"""
+
+
 def main():
     token = os.environ.get("POSTHOG_TOKEN", "").strip()
     host = os.environ.get("POSTHOG_HOST", "").strip() or "https://us.i.posthog.com"
@@ -45,6 +52,7 @@ def main():
         cfg["tantr"] = os.environ["TANTR_SERVER"].strip()
     (DIST / "config.js").write_text("window.WAITLIST_CONFIG = " + json.dumps(cfg) + ";\n", encoding="utf-8")
     (DIST / "_headers").write_text(HEADERS, encoding="utf-8")
+    (DIST / "404.html").write_text(NOT_FOUND, encoding="utf-8")
     files = sum(1 for p in DIST.rglob("*") if p.is_file())
     print(f"build: dist/ has {files} files; PostHog token length {len(token)}, host {host}")
     if not token:

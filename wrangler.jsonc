@@ -1,0 +1,19 @@
+// Cloudflare Workers (static assets). The Worker serves dist/, which tools/build.py makes: the pages
+// and assets only, config.js written from the build variables, and a _headers file. Without this
+// file Cloudflare serves the repository root: no config.js (the form cannot reach PostHog) and the
+// README, tools and tests in public view.
+//
+// In the dashboard (Worker > Settings > Build): build command `python3 tools/build.py`, deploy
+// command `npx wrangler deploy`, and under "Build variables and secrets" POSTHOG_TOKEN = the
+// PostHog project token (phc_...). The custom domain is added in the dashboard, not here, so a
+// push can never move the domain by itself.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "shunya-systems-site",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./dist",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "404-page"
+  }
+}
