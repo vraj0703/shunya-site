@@ -15,6 +15,8 @@ ACC, UUID = "c0" * 16, "94f9f660-1a98-4259-8faa-f6d64c69ec55"
 URL = f"https://dash.cloudflare.com/{ACC}/workers/services/view/shunya-systems-site/production/builds/{UUID}"
 check("details link gives account, worker and build", b.parse_details(URL) == (ACC, "shunya-systems-site", UUID))
 check("the ?to= form of the link is read too", b.parse_details(URL.replace(".com/", ".com/?to=/")) == (ACC, "shunya-systems-site", UUID))
+check("a preview build's link (…/production/previews/<branch>/builds/<id>) is read too",
+      b.parse_details(URL.replace("/production/builds/", "/production/previews/previews-block/builds/")) == (ACC, "shunya-systems-site", UUID))
 check("another link gives nothing", b.parse_details("https://github.com/x/y/actions/runs/1") is None and b.parse_details(None) is None)
 check("log lines as [time, text] pairs", b.log_lines({"result": {"lines": [[1, "a"], [2, "b\n"]]}}) == ["a", "b"])
 check("log lines as objects and as strings", b.log_lines({"result": [{"message": "a"}, "b", {"x": 1}]}) == ["a", "b"])

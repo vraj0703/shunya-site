@@ -11,6 +11,9 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "shunya-systems-site",
   "compatibility_date": "2026-10-01",
+  // For a branch Cloudflare runs `npx wrangler preview`, which refuses a configuration without this
+  // block ("missing a `previews` block"). Empty is enough: assets and the rest stay at the top level.
+  "previews": {},
   "assets": {
     "directory": "./dist",
     "html_handling": "auto-trailing-slash",
