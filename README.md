@@ -35,3 +35,22 @@ The build refuses a token that is not a `phc_` project token.
 
 Known limit: with an ad blocker that stops PostHog the signup still arrives on tantr's road, but
 it is then missing from PostHog until the server forwards submissions (tantr-app PR 12).
+
+## Build logs: Cloudflare to the logger and PostHog
+
+Cloudflare's build log lives in its dashboard. `.github/workflows/build-log.yml` copies each build's
+outcome there too: when Cloudflare's check on a commit completes, `tools/build_log.py` reads the build
+id from the check's link, fetches the log from Cloudflare's API and posts one record to the tantr
+logger (`https://logs.tantr.app/ingest`), which forwards it to PostHog as a log line, as an event
+`cloudflare_build_finished`, and, for a failed build, as an error `CloudflareBuildFailed` with the
+last error line. The record carries worker, branch, commit, conclusion and the last 80 log lines.
+
+Two repository secrets switch it on (Settings > Secrets and variables > Actions):
+
+- `LOGS_API_KEY`: an ingest key of the logger. The logger's `LOGS_API_KEYS` must hold
+  `shunya-site=<that key>`; another app name goes in the repository variable `LOGS_APP`.
+- `CLOUDFLARE_API_TOKEN`: a user-scoped API token (an account-scoped one is refused by the builds
+  API) with Workers Builds Configuration. Try Read first; Cloudflare's page names Edit.
+
+Without the first nothing is sent; without the second the outcome is sent without the log. Neither
+case fails the run. `python test/build_log_test.py` checks the script without the network.
