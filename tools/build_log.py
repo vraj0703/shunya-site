@@ -102,6 +102,15 @@ def record(event, app, lines=None, log_note=None):
     return rec
 
 
+def key_shape(key):
+    """What a key looks like, without the key: its length and the kinds of characters in it. Enough
+    to tell a pasted quote, a stray space or a wrong value from the real thing."""
+    kinds = [name for name, test in (("hex", lambda c: c in "0123456789abcdef"), ("other letters or digits", lambda c: c.isalnum() and c not in "0123456789abcdef"),
+                                     ("spaces", str.isspace), ("punctuation", lambda c: not c.isalnum() and not c.isspace()))
+             if any(test(c) for c in key)]
+    return f"the key has {len(key)} characters ({', '.join(kinds) or 'none'})"
+
+
 def http_json(url, headers=None, data=None):
     req = urllib.request.Request(url, data=json.dumps(data).encode() if data is not None else None,
                                  headers={"content-type": "application/json", "user-agent": "shunya-site-build-log", **(headers or {})},
@@ -140,10 +149,11 @@ def main():
         except (urllib.error.URLError, ValueError, OSError) as e:
             note = f"Cloudflare's log API could not be read: {type(e).__name__}"
     rec = record(event, app, lines, note)
+    print(f"build-log: read {len(lines or [])} log lines from Cloudflare" + (f" ({note})" if note else ""))
     try:
         http_json(base + "/ingest", headers={"x-api-key": key}, data=rec)
     except urllib.error.HTTPError as e:
-        print(f"build-log: the logger refused the record: {e.code}")
+        print(f"build-log: the logger refused the record: {e.code} for app '{app}' at {base}; {key_shape(key)}")
         return 1
     print(f"build-log: sent '{rec['message']}' with {len(lines or [])} log lines" + (f" ({note})" if note else ""))
     return 0
