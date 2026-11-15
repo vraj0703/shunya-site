@@ -1,0 +1,30 @@
+name: Build log
+
+# When Cloudflare's own check on a commit completes (pass or fail, main or a branch), send the
+# outcome and the tail of the build's log to the tantr logger, which forwards it to PostHog. There
+# it can be searched, shows up in error tracking when a build fails, and can be read by an agent
+# without the Cloudflare dashboard. GitHub runs this from the workflow file on main only.
+#
+# Secrets (repository > Settings > Secrets and variables > Actions), both optional: without
+# LOGS_API_KEY nothing is sent; without CLOUDFLARE_API_TOKEN the outcome is sent without the log.
+
+on:
+  check_run:
+    types: [completed]
+
+permissions:
+  contents: read
+
+jobs:
+  send:
+    if: github.event.check_run.app.slug == 'cloudflare-workers-and-pages'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { ref: main }
+      - run: python3 tools/build_log.py
+        env:
+          LOGS_API_KEY: ${{ secrets.LOGS_API_KEY }}
+          LOGS_APP: ${{ vars.LOGS_APP }}
+          TANTR_LOGS_URL: ${{ vars.TANTR_LOGS_URL }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
