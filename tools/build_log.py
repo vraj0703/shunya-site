@@ -20,7 +20,7 @@ import urllib.error
 import urllib.request
 
 CF_APP = "cloudflare-workers-and-pages"
-DETAILS = re.compile(r"dash\.cloudflare\.com/(?:\?to=/)?([0-9a-f]{32})/workers/services/view/([^/]+)/[^/]+/builds/([0-9a-f-]{36})")
+DETAILS = re.compile(r"dash\.cloudflare\.com/(?:\?to=/)?([0-9a-f]{32})/workers/services/view/([^/]+)/(?:[^/]+/)+builds/([0-9a-f-]{36})")
 ERROR_LINE = re.compile(r"\b(error|failed|failure|fatal|exception|not found|denied|invalid)\b", re.I)
 TAIL_LINES, TAIL_CHARS = 80, 12000
 
