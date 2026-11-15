@@ -84,6 +84,13 @@ with sync_playwright() as p:
     check("home: the header carries the mark (two braces, no ring) and the footer links to /logo/",
           page.locator("a.brand svg path").count() == 2 and page.locator("a.brand svg circle").count() == 0 and page.locator('footer a[href="./logo/"]').count() == 1
           and "M-5 -68.06" in page.request.get("http://127.0.0.1:8767/assets/shunya.svg").text())
+    for path, img in (("/", "og-shunya.png"), ("/tantr/", "og-tantr.png")):
+        page.goto(f"http://127.0.0.1:8767{path}")
+        got = page.request.get(f"http://127.0.0.1:8767/assets/{img}")
+        check(f"{img}: the page names it as its share image and the file is a 1200 x 630 PNG",
+              page.locator('meta[property="og:image"]').get_attribute("content") == f"https://shunya.systems/assets/{img}"
+              and page.locator('meta[name="twitter:card"]').get_attribute("content") == "summary_large_image"
+              and got.ok and got.body()[:8] == b"\x89PNG\r\n\x1a\n" and got.body()[16:24] == (1200).to_bytes(4, "big") + (630).to_bytes(4, "big"))
     page.goto("http://127.0.0.1:8767/tantr/")
     check("tantr: the header and the favicon carry the Spark mark (tile, stem, crossbar, idea node)",
           page.locator("a.brand svg rect").count() == 3 and page.locator("a.brand svg circle").count() == 1 and page.locator("a.brand svg path").count() == 0
