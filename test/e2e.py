@@ -84,6 +84,10 @@ with sync_playwright() as p:
     check("home: the header carries the mark (two braces, no ring) and the footer links to /logo/",
           page.locator("a.brand svg path").count() == 2 and page.locator("a.brand svg circle").count() == 0 and page.locator('footer a[href="./logo/"]').count() == 1
           and "M-5 -68.06" in page.request.get("http://127.0.0.1:8767/assets/shunya.svg").text())
+    page.goto("http://127.0.0.1:8767/tantr/")
+    check("tantr: the header and the favicon carry the Spark mark (tile, stem, crossbar, idea node)",
+          page.locator("a.brand svg rect").count() == 3 and page.locator("a.brand svg circle").count() == 1 and page.locator("a.brand svg path").count() == 0
+          and 'rx="30.24"' in page.request.get("http://127.0.0.1:8767/assets/tantr.svg").text())
     page.goto("http://127.0.0.1:8767/logo/")
     page.set_viewport_size({"width": 390, "height": 844}); page.wait_for_timeout(200)
     check("logo: no sideways scroll at 390 wide", page.evaluate("document.documentElement.scrollWidth <= 390"))
