@@ -45,4 +45,6 @@ r = b.record(event("failure"), "shunya-site", None, "CLOUDFLARE_API_TOKEN is not
 check("a failure without a log still says so", r["level"] == "error" and "no log was read" in r["error"]["message"] and r["fields"]["log_note"].startswith("CLOUDFLARE") and "log_tail" not in r["fields"])
 r = b.record(event("failure"), "shunya-site", [f"line {i}" for i in range(500)])
 check("the tail is the last 80 lines", r["fields"]["log_tail"].splitlines()[0] == "line 420" and r["fields"]["log_lines"] == 500)
+check("a key's shape is told without the key", b.key_shape("ab12") == "the key has 4 characters (hex)" and b.key_shape('"ab z"') == "the key has 6 characters (hex, other letters or digits, spaces, punctuation)"
+      and "ab12" not in b.key_shape("ab12"))
 print("ALL OK" if ok else "FAILED"); sys.exit(0 if ok else 1)
