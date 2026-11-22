@@ -7,8 +7,22 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 seen = []
 envelopes = []
 
+# The headers Cloudflare sends for every page, from tools/build.py itself (it writes dist/_headers),
+# so the local site behaves as the deployed one does: frame-ancestors above all.
+sys.path.insert(0, str(ROOT / "tools"))
+import build  # noqa: E402
+PAGE_HEADERS = {}
+_block = build.HEADERS.split("/*\n", 1)[1].split("\n/", 1)[0]
+for line in _block.strip().splitlines():
+    k, v = line.strip().split(": ", 1)
+    PAGE_HEADERS[k] = v
+
 class Site(http.server.SimpleHTTPRequestHandler):
     def log_message(self, *a): pass
+    def end_headers(self):
+        for k, v in PAGE_HEADERS.items():
+            self.send_header(k, v)
+        super().end_headers()
     def do_GET(self):
         if self.path == "/config.js":
             body = b'window.WAITLIST_CONFIG = { token: "phc_test", host: "http://127.0.0.1:8766", tantr: "http://127.0.0.1:8766" };'
@@ -36,8 +50,34 @@ ok = True
 def check(name, cond):
     global ok; ok &= bool(cond); print(("ok   " if cond else "FAIL ") + name)
 
+# Framing (PORTFOLIO-6): the portfolio shows this site in a gallery frame, so it may be framed by
+# itself and by the portfolio's own origins, and by nothing else.
+check("framing: no X-Frame-Options (it cannot name the portfolio)", "X-Frame-Options" not in PAGE_HEADERS)
+check("framing: frame-ancestors names self, the portfolio's two hosts and its preview, nothing wider",
+      PAGE_HEADERS.get("Content-Security-Policy", "").split() == ["frame-ancestors", "'self'",
+      "https://www.vishalraj.space", "https://vishalraj.space",
+      "https://vishal-raj-space-firebase-home--pr-28-7xiu4eqk.web.app"])
+
+class Parent(http.server.BaseHTTPRequestHandler):
+    """A page on another origin that tries to frame the site."""
+    def log_message(self, *a): pass
+    def do_GET(self):
+        body = b'<iframe src="http://127.0.0.1:8767/" width="600" height="400"></iframe>'
+        self.send_response(200); self.send_header("Content-Type", "text/html"); self.end_headers(); self.wfile.write(body)
+serve(Parent, 8768)
+
 with sync_playwright() as p:
     b = p.chromium.launch()
+    ctx = b.new_context(); page = ctx.new_page()
+    page.goto("http://127.0.0.1:8767/privacy.html")
+    page.evaluate("document.body.innerHTML = '<iframe src=\"/\" width=600 height=400></iframe>'")
+    page.wait_for_timeout(1500)
+    own = [f for f in page.frames if f != page.main_frame]
+    check("framing: the site may frame itself", bool(own) and own[0].url.startswith("http://127.0.0.1:8767/"))
+    page.goto("http://127.0.0.1:8768/"); page.wait_for_timeout(1500)
+    other = [f for f in page.frames if f != page.main_frame]
+    check("framing: another origin is refused", bool(other) and not other[0].url.startswith("http://127.0.0.1:8767"))
+    ctx.close()
     for path, site in (("/", "shunya"), ("/tantr/", "tantr")):
         ctx = b.new_context(); page = ctx.new_page(); errors = []
         page.on("pageerror", lambda e: errors.append(str(e)))

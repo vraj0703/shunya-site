@@ -17,10 +17,15 @@ import sys
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 DIST = ROOT / "dist"
 PAGES = ["index.html", "privacy.html", "tantr", "logo", "assets"]
+# Framing (PORTFOLIO-6): the portfolio at vishalraj.space shows this site live in a gallery frame.
+# X-Frame-Options can only say SAMEORIGIN or DENY, so it gives way to frame-ancestors, which names
+# the site itself, the portfolio's two hosts and its Firebase preview for that work. A CSP host
+# wildcard covers only a whole leftmost label, so the previews cannot be matched more narrowly
+# than *.web.app (any Firebase site): each preview channel is named instead.
 HEADERS = """/*
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
-  X-Frame-Options: SAMEORIGIN
+  Content-Security-Policy: frame-ancestors 'self' https://www.vishalraj.space https://vishalraj.space https://vishal-raj-space-firebase-home--pr-28-7xiu4eqk.web.app
   Permissions-Policy: camera=(), microphone=(), geolocation=()
 /config.js
   Cache-Control: no-cache
