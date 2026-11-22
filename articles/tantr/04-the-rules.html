@@ -1,0 +1,47 @@
+<!-- {"title": "Keeping the cost flat", "short": "The rules", "summary": "tantr is written mostly by AI agents. The rules they write under have two aims: the screen never breaks, and feature twenty costs what feature two did.", "slug": "the-rules", "order": 4, "minutes": 5} -->
+<p>Most of tantr's code was written by AI agents, directed and reviewed by one engineer. An agent writes quickly and has no memory of what it wrote last week. Left alone, it will solve the same problem four different ways in four sessions. So the repository opens with a document of coding rules that every change is reviewed against. This article is about what those rules are for.</p>
+
+<h2>Two aims, in order</h2>
+<ol>
+  <li><strong>The screen never breaks in front of a user.</strong></li>
+  <li><strong>The next feature costs what the last one cost.</strong></li>
+</ol>
+<p>Both come before "the code is elegant". Elegance is not a goal. A flat cost curve is.</p>
+
+<h2>The screen never breaks</h2>
+<p>The person using the app may be a field worker on a poor connection, or someone checking a health reading. For them a blank screen, a crash or a spinner that never ends is worse than a screen that is slightly out of date. So every operation that can fail returns its failure as a value that the caller must handle. Nothing throws across a boundary between layers and hopes someone catches it.</p>
+<p>There is one hard limit: the screen must not lie. Showing zero for a count that could not be loaded is acceptable when zero is true. Inventing a fact to fill a gap is not. When the app does not know, it says so.</p>
+<p>A smaller rule from the same family: nothing waits for a fixed time and hopes the thing it needs is ready. It waits for the real signal.</p>
+
+<h2>Feature twenty costs what feature two did</h2>
+<p>In most codebases the twentieth feature costs several times what the second did. It is not harder. By then there are four ways to do everything, three of them half replaced, and each change means finding all of them. The rules name what keeps the cost flat:</p>
+<ul>
+  <li><strong>One shape, repeated.</strong> Every feature has the same folders, the same roles and the same skeleton. A new feature is a copy of a known shape, not a design problem.</li>
+  <li><strong>Nothing central that could sit with the feature.</strong> A feature registers its own parts, routes and measurements. Adding one does not mean editing a file every other feature also edits.</li>
+  <li><strong>Variation as data.</strong> A new form field is one entry. A new flow is a file. The hundredth variant costs what the second did.</li>
+  <li><strong>One way to do each thing.</strong> One way to return an error, one way to wire parts together, one router, one approach to state.</li>
+</ul>
+<p>And what bends it upwards: two libraries doing the same job, a migration that stopped halfway, a business rule copied into a third place, a screen whose rules are buried in its drawing code.</p>
+
+<h2>Speed is a feature</h2>
+<p>The rules also say what not to do. Do not polish what was not asked for. Do not add a layer for a second case that does not exist yet. Do not rewrite code nobody asked you to touch. Ship the smallest correct thing. When a rule conflicts with shipping something correct today, the agent must say so and propose the trade. It may not quietly pick a side.</p>
+
+<h2>Ask before you build</h2>
+<p>The repository keeps a retrieval index of its own code, documents and recent history. Every task starts by asking it what already exists. An agent's commonest expensive mistake is not a bug. It is building, with care and tests, something the repository already had. The index was wired into every session after exactly that happened.</p>
+
+<h2>Checks, not hopes</h2>
+<p>A rule that depends on being remembered will be forgotten, by people and by agents. Where a rule can be a check, it is one:</p>
+<table>
+  <thead><tr><th>Rule</th><th>The check</th></tr></thead>
+  <tbody>
+    <tr><td>Files that repeat across apps stay the same</td><td>A gate that fails on a silent difference</td></tr>
+    <tr><td>Every file has an owner</td><td>A gate that fails on a file with none</td></tr>
+    <tr><td>The contract and the code agree</td><td>Example messages validated on both sides</td></tr>
+    <tr><td>A server speaks the contract</td><td>The conformance suite</td></tr>
+    <tr><td>A generated product builds</td><td>A test that generates one and builds it</td></tr>
+  </tbody>
+</table>
+
+<h2>What this buys</h2>
+<p>An engineer reviewing an agent's change in tantr is not reading unfamiliar code. Every feature has the shape of every other, so the review is a comparison with a known pattern, and what is different is what matters. That is the only way one person can review the output of several agents and still answer for it.</p>
+<p>tantr is not public yet. If you would like to build on it, or see the apps made with it, ask for access.</p>

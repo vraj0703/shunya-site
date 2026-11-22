@@ -1,0 +1,37 @@
+<!-- {"title": "Logs and memory", "short": "Logs and memory", "summary": "One place where every program reports, a few kinds of memory that exist today, and the one that is being built.", "slug": "logs-and-memory", "order": 3, "minutes": 4} -->
+<p>An agent can only fix what it can see, and can only continue what it remembers. This article is about both: where the system's programs report, and how the system remembers from one session to the next. The first is built. The second is partly built, and this article says which part.</p>
+
+<h2>One record for everything</h2>
+<p>Every program in the system, an app on a phone, a server, a build, an agent, logs the same kind of record: when, which program, how serious, a message, a few named fields, and the identity of the piece of work it belongs to. Errors carry their stack. An event a product cares about, such as a form being sent, is the same record with an event name in it.</p>
+<p>That last identity is what makes the record useful. One tap in an app can pass through the app, a queue and a server. All three write records that carry the same trace identity, so the whole path of that tap can be read back in order, across programs.</p>
+
+<h2>A service in the middle</h2>
+<p>Programs do not send their logs straight to an analytics product. They send them to a small service the company runs. The service does three things.</p>
+<ol>
+  <li><strong>It masks.</strong> E-mail addresses, tokens and the like are removed once, in one place, before anything leaves.</li>
+  <li><strong>It keeps a journal.</strong> The last two weeks can be searched and any trace read back.</li>
+  <li><strong>It forwards.</strong> Records go on to a hosted analytics product for charts and alerts. That product can be swapped without touching any program.</li>
+</ol>
+
+<h2>Logs an agent can read</h2>
+<p>The journal has a second door, made for agents. Through it an agent can search the logs, read one trace from start to end, or ask for a summary, and each answer is cut to a size an agent can take in. When a person says "the form failed on my phone a minute ago", the agent does not ask for a screenshot. It reads the trace.</p>
+<p>Agents write to the journal as well. A long piece of agent work leaves the same kind of record an app does.</p>
+
+<h2>Memory today</h2>
+<p>There is no single memory yet. There are four smaller ones, each real and each in daily use.</p>
+<table>
+  <thead><tr><th>Memory</th><th>What it holds</th><th>How it is read</th></tr></thead>
+  <tbody>
+    <tr><td>Notes</td><td>A few short files: what the person prefers, what went wrong before, what is open</td><td>In full, at the start of every session</td></tr>
+    <tr><td>Tickets</td><td>Every piece of work, its state, its outcome and the questions waiting for the person</td><td>When work is picked up or reported</td></tr>
+    <tr><td>The thread</td><td>Every brief and every report between agents</td><td>On demand, back to the first message</td></tr>
+    <tr><td>A retrieval index</td><td>The code, documents and recent history of the framework's repository</td><td>Asked before any change there</td></tr>
+  </tbody>
+</table>
+<p>The retrieval index was added after a mistake. An agent built a store for feature flags that the repository already had. Now every task in that repository starts by asking the index what exists.</p>
+
+<h2>What is missing</h2>
+<p>These four do not know about each other. A fact learned in a thread does not reach the notes unless an agent writes it there. Nothing takes in what happens outside the work: messages, mail, measurements, thoughts. And nothing yet hands an agent the right handful of facts for the task in front of it, drawn from all of them.</p>
+<p>That is the memory system, and it is the next thing to be built. Its design has three parts: an intake that keeps everything as it arrived, a recall that returns what is relevant to a question, and a body of settled knowledge that is written once and corrected, not relearned. It is designed and not built. When it is built, this article will be rewritten.</p>
+
+<p>What all of this has produced so far is <a href="../the-outputs/">the last article</a>.</p>
