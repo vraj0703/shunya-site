@@ -1,0 +1,46 @@
+<!-- {"title": "What came out: eight days on one project", "short": "The outputs", "summary": "A worked example with its numbers and its mistakes: a portfolio site taken from unusable on a phone to smooth, in twenty-three reviewed pull requests.", "slug": "the-outputs", "order": 4, "minutes": 5} -->
+<p>A system like this is worth describing only if something comes out of it. So far three things have: tantr, the framework the apps are built on, which has <a href="/tantr/">its own page</a>; this site; and a portfolio at <a href="https://www.vishalraj.space" rel="noopener">vishalraj.space</a>, a gallery you walk through, drawn in three dimensions in the browser. This article follows the portfolio through eight days, because it is the clearest record of how the system works on an ordinary job.</p>
+
+<h2>The starting point</h2>
+<p>The portfolio ran well on a desktop. On a phone it ran at two to five frames a second. The title took a long time to appear, scrolling stalled, and the gallery could barely be entered. The request was three words: improve the mobile experience.</p>
+
+<h2>How the work went</h2>
+<p>The planning agent did not guess. It asked the worker seat on the desktop to measure, on a real phone connected by cable, where each frame's time went. The answers came back layer by layer.</p>
+<ol>
+  <li>The phone was drawing three times as many pixels as it needed. Capping the pixel ratio was the largest single gain.</li>
+  <li>The animated background did the same amount of work on a phone as on a desktop. It was given a lighter setting for phones.</li>
+  <li>The gallery computed its lamps on every frame. They were computed once and kept.</li>
+  <li>Things were being loaded and compiled at the moment they were first shown, which is when a stall is most visible. All of it was moved under the loading screen. The founder's instruction was to take all the time once, at the start, and never afterwards.</li>
+</ol>
+<p>After these, on the same phone: about thirty frames a second on the title, twenty-six while scrolling, thirty-eight in the gallery.</p>
+
+<h2>Then the controls</h2>
+<p>Speed was not the end of it. The founder tested each build on his own phone and wrote back what he felt: the walk dragged, the gallery ignored a sideways push, a menu was hidden. Each remark became a ticket, a brief and a pull request with a link to try. The gallery got a thumb stick with acceleration. The title got two timed strokes. The phone got a pointer made from touch and tilt, so that what a mouse does on a desktop has an equal on a phone.</p>
+
+<h2>The numbers</h2>
+<table>
+  <thead><tr><th>Measure</th><th>Value</th></tr></thead>
+  <tbody>
+    <tr><td>Days</td><td>8</td></tr>
+    <tr><td>Pull requests merged</td><td>23, each read and merged by a person</td></tr>
+    <tr><td>Pull requests closed without merging</td><td>2</td></tr>
+    <tr><td>Frames a second on the phone, before</td><td>2 to 5</td></tr>
+    <tr><td>Frames a second on the phone, after</td><td>26 to 38, by scene</td></tr>
+    <tr><td>Automated tests at the end</td><td>more than 1,000</td></tr>
+  </tbody>
+</table>
+
+<h2>What went wrong</h2>
+<p>The record is more useful with its mistakes in it.</p>
+<ul>
+  <li><strong>A wrong failure.</strong> One fix was reported as having failed. The measuring tool had been resizing the page as it took its pictures, and the numbers were its own doing. The report was withdrawn and the tool fixed.</li>
+  <li><strong>A regression on desktop.</strong> A change meant for phones was also applied to the desktop and made the title hang there. It was undone, and a check now walks the whole site on desktop and phone before any pull request is reported.</li>
+  <li><strong>A misread instruction.</strong> "The hover is not working" was taken to mean one thing when it meant another, and a day went to the wrong fix.</li>
+  <li><strong>A second way to do one thing.</strong> An agent added a side channel next to the state machine the project already had. The founder caught it in review and it was removed.</li>
+  <li><strong>An idle hour.</strong> A worker seat asked a question at the end of a long report. The end was cut off, the question was not seen, and the seat waited.</li>
+</ul>
+<p>None of these reached the live site unnoticed, because nothing reaches the live site without a person merging it. That is the part of the design doing its job.</p>
+
+<h2>What it shows</h2>
+<p>One person directed this work in the gaps of his days: a few lines from a phone, a review in the evening, a merge. He did not write the code. He decided what was wanted, said when it was not yet right, and kept the last word. The agents did the measuring, the building and the testing, and wrote down what they did.</p>
+<p>That is what Shunya Systems is: a way for one person to do the work of a small team without giving up the decisions. The apps it is now building are not public yet. If you would like to see them early, ask.</p>

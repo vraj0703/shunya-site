@@ -1,0 +1,31 @@
+<!-- {"title": "A product is generated, not forked", "short": "The generator", "summary": "A new tantr app starts as one command. What keeps the seventh app as easy to maintain as the first is that nobody copied anything by hand.", "slug": "the-generator", "order": 3, "minutes": 4} -->
+<p>The usual way to start a second app is to copy the first and change it. It works on the day. A year later the two have drifted: a fix made in one was never made in the other, and nobody remembers which differences were intended. tantr does not allow that start.</p>
+
+<h2>One command</h2>
+<p>A new product is made by a generator. It takes a name, a title and the profiles the product needs:</p>
+<pre><code>tantr_create --name plantcare --title "Plant Care" --features collect,notify</code></pre>
+<p>What comes out compiles and runs. It has the screens for the chosen profiles, tests, example data and a server to run against. Code for the profiles that were not chosen is absent, not switched off.</p>
+
+<h2>Carved from one reference</h2>
+<p>The generator does not hold templates of its own. It carves the product out of a reference app that has every profile and is itself tested end to end. Sections of the reference are marked with the profile they belong to. The generator keeps the sections for the chosen profiles and removes the others, along with the files each of those owns.</p>
+<p>So there is one app that is always complete and always working, and every product is a subset of it. A test generates a product and checks the result, so the generator cannot quietly break.</p>
+
+<h2>Updating a product later</h2>
+<p>The reference keeps improving after a product is generated. The generator has an update mode that brings a product up to the current reference without touching what is the product's own. That is possible because of a rule about where things live: everything specific to a product sits in its own feature folder, and the rest is the generator's.</p>
+
+<h2>A gate against drift</h2>
+<p>Some files are, by design, the same in every app. A check in the workspace compares them. If one app's copy has changed and the others have not, the check fails and the build stops. Either the change belongs in all of them, or it belongs in the shared package, or it is a real difference and is declared as one. What cannot happen is a silent difference.</p>
+<p>A second check gives every file an owner, and fails when a file has none. Between them, a new file has to say who answers for it and whether it is meant to be repeated.</p>
+
+<h2>Design is data too</h2>
+<p>A generated app does not carry its own colours and sizes in its code. It reads them from tokens: a small file of colours, type sizes, spacing and shapes. Changing a brand is changing that file. The landing page built on tantr goes further. Its sections, their order and their wording are a file the server sends, so the page is edited without a release.</p>
+
+<h2>The player</h2>
+<p>The furthest step is an app with no product in it at all. The player is one published app that is given a product's identity, asks the server for that product's configuration, and becomes it: its forms, its cards, its colours. It downloads data and never code, which is what makes it acceptable to the app stores.</p>
+<p>With the player, defining a product and trying it on a phone are minutes apart. A person describes a tracker in the console, a form to fill and a chart to read, and opens it on their phone.</p>
+
+<h2>What has been generated</h2>
+<p>Seven apps live in the workspace today. Three show the range: a plant care app that identifies a plant from a photograph and reminds its owner to water it; a voice ordering app with one screen, built for a single shopkeeper who orders stock by speaking; and the framework's own landing page.</p>
+<p>Shunya Systems plans to build its next apps the same way: a set of small personal trackers, each a form to collect and a card to read, each a product made by the generator.</p>
+
+<p>The last article is about the rules that the people and agents who write tantr work under: <a href="../the-rules/">keeping the cost flat</a>.</p>
