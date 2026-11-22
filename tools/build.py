@@ -3,9 +3,11 @@
 README), plus config.js written from the environment and a _headers file.
 
 The two first pages and every article are rendered here (the redesign from Vishal's wireframe):
-  articles/<site>/00-home.json      the first page's words: title, description, button
+  articles/<site>/00-home.json      the first page's words: title, description, button, meta
+                                    (the page's meta description)
   articles/<site>/NN-slug.html      an article: first line an HTML comment holding JSON
-                                    {"title","summary","slug","order","minutes"}, then a body
+                                    {"title","short","summary","slug","order","minutes"} (short:
+                                    the first page's link label), then a body
                                     fragment in plain semantic HTML
 through templates/home.html, templates/article.html and templates/request.html (the request-access
 form, SHUNY-13). Shunya's articles go to /articles/<slug>/, tantr's to /tantr/articles/<slug>/;
@@ -120,10 +122,13 @@ def render(out_dir):
         words = json.loads((ARTICLES / site / "00-home.json").read_text(encoding="utf-8"))
         items = articles(site)
         og = f"{ORIGIN}/assets/{s['og']}"
-        links = "".join(f'<a href="{article_path(site, m["slug"])}">{esc(m["title"])}</a>' for m, _ in items)
+        # The first page's links carry the article's short label ("short"), its title otherwise.
+        links = "".join(f'<a href="{article_path(site, m["slug"])}" title="{esc(m["title"])}">{esc(m.get("short") or m["title"])}</a>'
+                        for m, _ in items)
         page = home_t.substitute(
             brand=site, name=esc(s["name"]), mark=s["mark"], home=s["home"], title=esc(words["title"]),
             page_title=esc(words["title"]), description=esc(words["description"]), button=esc(words["button"]),
+            meta=esc(words.get("meta") or words["description"]),
             url=f"{ORIGIN}{s['home']}", og_image=og, links=links, footer=s["footer"], request=request)
         target = out_dir / s["out"] / "index.html"
         target.parent.mkdir(parents=True, exist_ok=True)

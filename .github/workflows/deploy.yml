@@ -3,7 +3,7 @@ name: Test
 # The waitlist pages are hosted on Cloudflare (a Worker with static assets), which builds and deploys from this repository
 # by itself: every push to main goes live at shunya.systems, and every pull request gets its own
 # preview URL, commented on the PR by Cloudflare. This workflow is the gate beside it: the
-# end-to-end test (both pages, both roads, against a fake endpoint) and a check that the build
+# end-to-end test (both first pages, all eight articles, the form on both roads, against fake endpoints) and a check that the build
 # Cloudflare will run still works. Keep main protected on this check so a red test cannot ship.
 
 on:
@@ -24,4 +24,4 @@ jobs:
       - run: python test/build_log_test.py
       - name: The Pages build works
         env: { POSTHOG_TOKEN: phc_ci_check }
-        run: python tools/build.py && test -f dist/index.html -a -f dist/tantr/index.html -a -f dist/logo/index.html -a -f dist/logo/shunya-mark.svg -a -f dist/config.js -a -f dist/_headers -a -f dist/404.html && python3 -c "import json,re,pathlib; json.loads(re.sub(r'^\s*//.*$', '', pathlib.Path('wrangler.jsonc').read_text(), flags=re.M))"
+        run: python tools/build.py && test -f dist/index.html -a -f dist/tantr/index.html -a -f dist/articles/the-layout/index.html -a -f dist/tantr/articles/five-profiles/index.html -a -f dist/logo/index.html -a -f dist/logo/shunya-mark.svg -a -f dist/config.js -a -f dist/_headers -a -f dist/404.html && python3 -c "import json,re,pathlib; json.loads(re.sub(r'^\s*//.*$', '', pathlib.Path('wrangler.jsonc').read_text(), flags=re.M))"
