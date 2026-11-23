@@ -84,6 +84,23 @@ check("content: four articles a site, in order, each with a short label",
       all(len(ARTS[s]) == 4 and [m["order"] for m in ARTS[s]] == sorted(m["order"] for m in ARTS[s]) and all(m.get("short") for m in ARTS[s]) for s in ARTS))
 
 
+# How the first page's article links look: sizes, colour against --body and --accent, the hairline,
+# and the WCAG contrast of each link's colour on the page background (relative luminance).
+LINK_LOOK = """(() => {
+  const rgb = s => s.match(/[\\d.]+/g).slice(0, 3).map(Number);
+  const lum = c => { const l = rgb(c).map(v => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; });
+    return 0.2126 * l[0] + 0.7152 * l[1] + 0.0722 * l[2]; };
+  const ratio = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((m, n) => n - m); return (x + 0.05) / (y + 0.05); };
+  const probe = v => { const s = document.createElement('span'); s.style.color = `var(${v})`; document.body.append(s);
+    const c = getComputedStyle(s).color; s.remove(); return c; };
+  const bg = getComputedStyle(document.body).backgroundColor;
+  const a = [...document.querySelectorAll('nav.reads a')].map(e => getComputedStyle(e));
+  return { sizes: a.map(s => parseFloat(s.fontSize)), color: a[0].color, body: probe('--body'), accent: probe('--accent'),
+    border: a[0].borderTopWidth, firstColor: a[0].color, firstBorder: a[0].borderTopColor,
+    rest: Math.min(...a.map(s => ratio(s.color, bg))), first: ratio(a[0].color, bg) };
+})()"""
+
+
 def request(page, note, site, email, name="", reason="", expect="ok"):
     """Open the dialog from a Request access button, fill it, send it, wait for the answer."""
     page.locator("button.ask").first.click()
@@ -178,6 +195,19 @@ with sync_playwright() as p:
         check(f"{site}: the panel painted", page.evaluate("(()=>{const c=document.querySelector('.panel canvas');const d=c.getContext('2d').getImageData(0,0,c.width,c.height).data;let n=0;for(let i=0;i<d.length;i+=4)if(d[i]>40)n++;return n})()") > 500)
         page.set_viewport_size({"width": 1440, "height": 900}); page.wait_for_timeout(200)
         check(f"{site}: a desktop first page fits one screen", page.evaluate("document.documentElement.scrollHeight <= innerHeight"))
+        for w in (1440, 900):
+            page.set_viewport_size({"width": w, "height": 900}); page.wait_for_timeout(200)
+            st = page.evaluate(LINK_LOOK)
+            check(f"{site}: at {w} wide the article links are 15-16 px in the body ink, hairline above, {st['rest']:.1f}:1 at rest",
+                  all(15 <= s <= 16 for s in st["sizes"]) and st["color"] == st["body"] and st["border"] == "1px" and st["rest"] >= 4.5)
+        links.nth(0).hover(); page.wait_for_timeout(300)
+        hov = page.evaluate(LINK_LOOK)
+        links.nth(0).focus(); page.mouse.move(0, 0); page.wait_for_timeout(300)
+        foc = page.evaluate(LINK_LOOK)
+        check(f"{site}: hover and focus turn a link and its hairline the brand colour, {hov['first']:.1f}:1 hovered, {foc['first']:.1f}:1 focused",
+              hov["firstColor"] == hov["accent"] == hov["firstBorder"] and foc["firstColor"] == foc["accent"] and hov["first"] >= 4.5 and foc["first"] >= 4.5)
+        page.set_viewport_size({"width": 1440, "height": 900}); page.mouse.move(0, 0); page.evaluate("document.activeElement.blur()"); page.wait_for_timeout(300)
+        page.screenshot(path=str(ROOT / "test" / f"{site}-desktop.png"))
         page.set_viewport_size({"width": 1424, "height": 1024}); page.wait_for_timeout(200)
         check(f"{site}: at the portfolio frame's 1424 x 1024 it fits one screen", page.evaluate("document.documentElement.scrollHeight <= innerHeight"))
         page.set_viewport_size({"width": 390, "height": 844}); page.wait_for_timeout(200)
