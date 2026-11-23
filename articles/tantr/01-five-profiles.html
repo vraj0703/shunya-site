@@ -1,0 +1,37 @@
+<!-- {"title": "Five things every app rebuilds", "short": "Five profiles", "summary": "Most product apps are the same five behaviours with different words on them. tantr writes those five once.", "slug": "five-profiles", "order": 1, "minutes": 4} -->
+<p>Look past the colours and the copy of most product apps and the same few behaviours are underneath. The app asks the user for something. It shows the user something about themselves. It tells them something happened. It asks them to decide. It lets them talk to someone. Each team builds these again, each a little differently, and then maintains its own version for years.</p>
+<p>tantr is a runtime that writes those five once. It calls them profiles.</p>
+
+<h2>The five</h2>
+<table>
+  <thead><tr><th>Profile</th><th>What it does</th><th>What arrives as data</th></tr></thead>
+  <tbody>
+    <tr><td>collect</td><td>Asks for data: a form, a scan, a reading</td><td>The form's fields, rules and wording</td></tr>
+    <tr><td>insight</td><td>Shows the user what the data means</td><td>Cards: a number, a chart, a list</td></tr>
+    <tr><td>notify</td><td>Tells the user something happened</td><td>The message and where it leads</td></tr>
+    <tr><td>act</td><td>Asks the user to decide or approve</td><td>The request and its choices</td></tr>
+    <tr><td>chat</td><td>A conversation, with a person or an agent</td><td>The messages, in order</td></tr>
+  </tbody>
+</table>
+<p>A product picks the profiles it needs. A plant care app is collect and notify: scan a plant, save it, be reminded to water it. A landing page with a sign-up form is collect and insight. A support tool is chat and act.</p>
+
+<h2>Behaviour is configuration</h2>
+<p>In a tantr app the profiles are code, written once and tested once. What a particular product does with them is data. The form a user sees is a definition sent by the server. The cards on the home screen are sent by the server. A new question on a form, a new card, a changed message: each is a change to data on the server, and the app that is already installed shows it.</p>
+<p>This is the point of the whole design. A change that is data does not need a build, a store review or an update on anyone's phone. And the hundredth form costs what the second one did, because nobody wrote new code for it.</p>
+
+<h2>What is still code</h2>
+<p>Not everything is a form. A product usually has one thing that is truly its own: the way a plant is recognised from a photograph, the way an order is taken by voice. That lives in the product, as ordinary code, in a folder of its own. tantr's claim is modest and specific: the common four fifths is written once, so that a small team's effort goes into the fifth that is theirs.</p>
+
+<h2>What exists today</h2>
+<ul>
+  <li>Thirty-one runtime packages: the contract, the transports, the queue, the renderers, the design tokens, logging, storage.</li>
+  <li>Seven apps built on them, among them a reference app with every profile, a plant care app, a voice ordering app made for one shopkeeper, a player that becomes any product from its identity, and the console where a product is defined.</li>
+  <li>A reference server, and a suite of about two hundred tests that say whether any other server speaks the contract correctly.</li>
+  <li>More than four hundred test files across the workspace.</li>
+</ul>
+<p>It also runs things you would not call an app. The message thread that Shunya Systems' agents use to hand work to each other is tantr's chat profile. The request form on this site sends the same record a tantr app sends.</p>
+
+<h2>Who it is for</h2>
+<p>A founder with a design and no app. A small team whose next ten features are all forms and lists. A company that wants its own server to drive its apps without shipping a release for each change. And, inside Shunya Systems, one engineer and a team of AI agents, for whom a framework with one way to do each thing is what makes the agents' work reviewable at all.</p>
+
+<p>What makes the five profiles work together is one shape of message. That is <a href="../the-contract/">the next article</a>.</p>

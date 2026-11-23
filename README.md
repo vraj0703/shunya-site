@@ -1,20 +1,43 @@
 # shunya-site
 
-The waitlist pages: `/` is Shunya Systems, `/tantr/` is tantr. Plain HTML, CSS and JS; no build
-step, no third-party script (TANTR-6).
+shunya.systems: `/` is Shunya Systems, `/tantr/` is tantr, each a first page and a case study in four
+articles (`/articles/<slug>/`, `/tantr/articles/<slug>/`). Plain HTML, CSS and JS; no framework, no
+third-party script (TANTR-6).
 
-Pressing **Join** sends the signup down two roads at once, and it counts when either arrives.
-One is tantr's own: a `collect.submission` envelope (formId `waitlist`, version 2) to
-`https://tantr.app/v0/envelopes`, kept in the server's up journal (`GET /v0/admin/up`). The other is one event, `waitlist_joined`, to PostHog's capture endpoint with the
-project's public client token: `distinct_id` is the address, properties are `email`, `site`
-(`shunya` | `tantr`), `page`, `referrer` and any `utm_*`, and `$set.email` puts the address on the
-person. In PostHog: Activity (events) filtered to `waitlist_joined`, or People.
+## The words and the pages
 
-`config.js` holds the token and is **not** in the repo. To try the site on the pc, write it first:
+- `articles/<site>/00-home.json`: the first page's words (`title`, `description`, `button`, `meta`).
+- `articles/<site>/NN-slug.html`: an article. The first line is an HTML comment holding JSON
+  `{"title","short","summary","slug","order","minutes"}` (`short` is the first page's link label);
+  the rest is a body fragment in plain semantic HTML. The build refuses anything that runs or loads.
+- `templates/`: `home.html` (Vishal's wireframe: mark and name, what it is, Request access, the four
+  links; the animated panel on the right; stacked on a phone), `article.html` (one readable column,
+  Request access at the end, previous and next) and `request.html` (the form, in a dialog).
+
+`tools/build.py` renders them into `dist/` with the assets. To try the site on the pc:
 
     powershell -File tools\write-config.ps1     # on the pc, from .secret\logger.env
+    python tools/build.py && python -m http.server 8080 --directory dist
 
-Try it: `python -m http.server 8080` in this folder, open http://localhost:8080/ and /tantr/.
+## Request access (SHUNY-13)
+
+Every Request access button opens the same form: an e-mail address (required), a name and one line on
+what they would use it for (both optional). Sending it takes two roads at once, and it counts when
+either arrives. One is tantr's own: a `collect.submission` envelope (formId `access_request`, version
+1, the whole request) to `https://tantr.app/v0/envelopes`, kept in the server's up journal
+(`GET /v0/admin/up`). The other is one event, `access_requested`, to PostHog's capture endpoint with
+the project's public client token: `distinct_id` is the address, properties are `email`, `site`
+(`shunya` | `tantr`), `has_name`, `has_reason` (whether they were given, never what they say),
+`page`, `referrer` and any `utm_*`, and `$set.email` puts the address on the person. In PostHog:
+Activity (events) filtered to `access_requested`, or People. The earlier `waitlist_joined` events stay
+where they are.
+
+`config.js` holds the token and is **not** in the repo (the build writes it from the environment).
+
+`python test/e2e.py` (playwright and chromium) builds the site into a temporary folder and walks it:
+both first pages, the eight articles from their links, the form on both roads against fake endpoints,
+phone widths, framing. `python tools/share_images.py` redraws the two share images from the marks and
+the first sentence of each description.
 
 ## Hosting: Cloudflare Workers (static assets)
 

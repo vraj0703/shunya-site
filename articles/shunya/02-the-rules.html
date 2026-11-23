@@ -1,0 +1,32 @@
+<!-- {"title": "Written rules, and a guard that checks them", "short": "The rules", "summary": "Twenty-two rules read at the start of every session, four of them enforced by a program that refuses the action.", "slug": "the-rules", "order": 2, "minutes": 4} -->
+<p>An AI agent starts every session knowing nothing about the last one. Whatever it should always do, and never do, has to be written down and read again each time. Shunya Systems keeps that in four short files, twenty-two rules in all. They are read in full at the start of every session, before any work.</p>
+
+<h2>Four files, four questions</h2>
+<table>
+  <thead><tr><th>File</th><th>The question it answers</th><th>An example</th></tr></thead>
+  <tbody>
+    <tr><td>Who</td><td>Who is the system for, and who decides?</td><td>The founder has the final say.</td></tr>
+    <tr><td>How to act</td><td>How is a piece of work carried out?</td><td>Nothing is done without evidence: show the output, run the tests.</td></tr>
+    <tr><td>How to speak</td><td>How does the agent report?</td><td>Lead with the outcome, then what is left, then what could not be done and why.</td></tr>
+    <tr><td>Never</td><td>What must it never do?</td><td>Network, firewall and key settings are changed by the founder only.</td></tr>
+  </tbody>
+</table>
+<p>Each rule is one sentence. Each carries two labels: whether it is fixed or may be tuned, and how it is enforced.</p>
+
+<h2>Two kinds of enforcement</h2>
+<p>Eighteen of the rules are enforced by review. The agent is expected to follow them, and the person reading its work notices when it does not. That is how most rules in most companies work.</p>
+<p>Four are enforced by a program. Before the agent runs any command, a guard reads the command and compares it with those four rules. If the command would change a firewall, start an agent on a timer, force a push over someone's work, or reach another machine by a road that is not the catalogue, the guard refuses it. The command does not run.</p>
+<p>The four were chosen because their damage cannot be taken back. A badly worded report can be rewritten. A deleted directory, an opened port or an agent left running unattended overnight cannot.</p>
+
+<h2>A refusal is the rule working</h2>
+<p>One rule covers what happens after a refusal. The agent must not look for another way to do the same thing. It says which rule stopped it, and asks. This matters more than it sounds. A capable agent that is blocked will often find a second road, and it will mean well. The rule makes the block the end of that road.</p>
+
+<h2>Evidence, and other agents</h2>
+<p>The rule that does the most daily work is the one about evidence. Nothing is "done" until the output is shown. It goes one step further: an agent must not trust another agent's "done" either. When a worker seat reports that tests pass, the planning agent checks the pull request and the test run itself before it tells the person.</p>
+<p>This rule exists because it was broken. Early in the portfolio work a result was reported as a failure on the strength of measurements that the measuring tool had itself distorted. The correction took a day. Several of the rules are scars of that kind, and the files say so.</p>
+
+<h2>Nothing unattended</h2>
+<p>The agents work only while a person has opened their session. No timer starts one. No service calls a model on its own. When the person is asleep, an agent may keep working on what it was asked, and it stops when that is finished. This costs convenience, and it is deliberate: there is always a person who started the work and will read what came of it.</p>
+
+<h2>What the rules do not do</h2>
+<p>They do not make the agents right. Agents under these rules have misread instructions, built things nobody asked for and reported numbers that were wrong. What the rules do is make the mistakes small, visible and reversible, and keep the ones that are none of those from happening at all. How the system sees its own mistakes is <a href="../logs-and-memory/">the next article</a>.</p>

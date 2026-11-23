@@ -1,0 +1,28 @@
+<!-- {"title": "One person, several machines", "short": "The layout", "summary": "How a company of one is laid out: one agent that plans, others that work, and a person who keeps the last word.", "slug": "the-layout", "order": 1, "minutes": 4} -->
+<p>Shunya Systems is a sole proprietorship. There is one person in it, Vishal Raj, an engineer. Everything else that a small software company needs done, planning, building, testing, reporting, is done by AI agents. This article is about how those agents are arranged, because the arrangement is most of what makes it work.</p>
+
+<h2>One mind, several hands</h2>
+<p>There is one agent that plans and reviews. It sits on a cloud server that is always on. It does not build, deploy or run anything heavy itself. Its job is to understand what was asked, break it into pieces, write the brief for each piece, read what comes back and check it.</p>
+<p>The building is done by other agents, called worker seats, on other machines: a desktop with a graphics card for the heavy work, a small server at home that holds the design tool and other services, and a second cloud server that serves what is public. A phone is the fifth machine. It is where the person reads and answers when he is away from a keyboard.</p>
+<p>The split follows what each machine is good at. A phone app has to be built and measured where the phone is plugged in. A design file has to be edited where the design tool runs. The planning agent does not need to be on any of them. It needs to be reachable and to remember.</p>
+
+<h2>A thread, not a shared screen</h2>
+<p>The agents do not share a memory or a screen. They talk over a message thread, the same kind of thread a chat app has. The planning agent writes a brief addressed to one seat. That seat does the work and answers on the thread with its evidence: the commit, the test count, the link to try.</p>
+<p>The thread is itself built on tantr, the framework this company makes apps with. Each message is one record with an identity, a time and a sender, so nothing is delivered twice and the whole conversation can be read back later. At the time of writing it holds a few hundred messages.</p>
+<p>The person is on the same thread from his phone. He can read every brief and every report. A message from the phone is treated as feedback. It is not treated as permission for anything that matters, because a thread cannot prove who typed a line. Permission is given in one place only: at the keyboard of the planning agent's own session.</p>
+
+<h2>A fixed list of actions</h2>
+<p>Between machines the planning agent can do only what is on a list. Each machine offers a small catalogue of named actions, such as run the tests, show what is running, or send a notification to the phone. There are fifteen of them today. An action is a folder with a short description of what it runs, with what inputs and for how long.</p>
+<p>The road between machines enforces this. The key the planning agent holds is bound on the far side to a single program, which accepts a named action from the catalogue and refuses everything else. The agent cannot open a shell on another machine, even if it wanted to. Every run ends in one line of evidence: which action, which version, whether it passed, how long it took.</p>
+
+<h2>What stays with the person</h2>
+<ul>
+  <li>Every merge, release, publication and deployment.</li>
+  <li>Every key, password and network setting.</li>
+  <li>Starting and stopping the worker seats.</li>
+  <li>The answer whenever an agent asks.</li>
+</ul>
+<p>An agent may push a branch and open a pull request. A person reads it and merges it, or does not. In the eight days described in <a href="../the-outputs/">the fourth article</a>, twenty-three pull requests were merged into one project, and each was merged by hand.</p>
+
+<h2>Why it is built this way</h2>
+<p>An agent that can do anything is hard to trust with anything. The layout gives each agent a narrow job, a narrow set of actions and a place to report, and it keeps the decisions that cannot be undone with the one person who answers for them. What makes that hold is not the agents' good intentions. It is the written rules and the guard that checks them, which is <a href="../the-rules/">the next article</a>.</p>

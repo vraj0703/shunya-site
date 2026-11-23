@@ -1,0 +1,15 @@
+<dialog class="request" aria-labelledby="request-title">
+  <div class="request-head">
+    <h2 id="request-title">Request access</h2>
+    <form method="dialog"><button class="x" type="submit" aria-label="Close">&times;</button></form>
+  </div>
+  <form class="join" novalidate>
+    <label class="hp" aria-hidden="true">Company <input type="text" name="company" tabindex="-1" autocomplete="off"></label>
+    <input class="field wide" type="email" name="email" placeholder="you@example.com" autocomplete="email" inputmode="email" aria-label="Your email address" required maxlength="254">
+    <input class="field wide" type="text" name="name" placeholder="Your name (optional)" autocomplete="name" aria-label="Your name, optional" maxlength="80">
+    <input class="field" type="text" name="reason" placeholder="What would you use it for? (optional)" autocomplete="off" aria-label="What would you use it for, optional" maxlength="200">
+    <button type="submit">Send request</button>
+  </form>
+  <p class="note" role="status" aria-live="polite"></p>
+  <p class="fine"><a href="/privacy.html">What is collected, and why</a></p>
+</dialog>

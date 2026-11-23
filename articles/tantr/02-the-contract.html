@@ -1,0 +1,37 @@
+<!-- {"title": "One envelope", "short": "The contract", "summary": "Every message between a tantr app and a server has the same shape. That one decision is what lets a server drive an app without a release.", "slug": "the-contract", "order": 2, "minutes": 4} -->
+<p>A tantr app and its server exchange one thing: envelopes. A form definition coming down is an envelope. The filled form going up is an envelope. A chat message, a notification, a card, a read receipt: all envelopes. There is no second kind of message.</p>
+
+<h2>What is on the envelope</h2>
+<table>
+  <thead><tr><th>Field</th><th>What it is for</th></tr></thead>
+  <tbody>
+    <tr><td>An identity</td><td>Unique to this message. A receiver that has seen it before drops the copy.</td></tr>
+    <tr><td>A type</td><td>Profile and kind, such as <code>collect.submission</code>. It names the shape of the contents.</td></tr>
+    <tr><td>A version</td><td>The version of the contract the contents follow.</td></tr>
+    <tr><td>A time and a direction</td><td>When it was made, and whether it is going up to the server or down to the app.</td></tr>
+    <tr><td>Where it came from</td><td>App or server, and for an app: the device, the session, the app's version and the language.</td></tr>
+    <tr><td>The contents</td><td>Checked against the schema the type names.</td></tr>
+  </tbody>
+</table>
+<p>Two optional fields tie messages together: one says which message this one answers, and one groups messages into an ordered conversation.</p>
+
+<h2>Sixteen types</h2>
+<p>The whole contract is sixteen types of envelope. Each profile has two or three: a definition and a submission for collect, a card and a refresh for insight, a request and a response for act. A few belong to no profile: the first message of a session, a change of configuration, an acknowledgement.</p>
+<p>Each type has a schema that says exactly what its contents may hold, and a set of example messages that are known to be valid. The schemas do not allow extra fields. A server that needs something the contract lacks proposes a change to the contract. It does not send the field and hope.</p>
+
+<h2>Delivered once, eventually</h2>
+<p>A phone loses its connection constantly. A tantr app does not send a message and wait. It puts the envelope in a queue on the device, and the queue sends it when there is a road, and sends it again if no acknowledgement comes back. Because every envelope has its own identity, the server can receive the same one three times and store it once.</p>
+<p>So a user on a train fills a form, the screen says it is saved, and it is. It leaves the phone when the tunnel ends.</p>
+
+<h2>The road is not part of the contract</h2>
+<p>The envelope does not care how it travels. The same envelopes move over ordinary web requests, over a held-open connection for chat, over a push notification, or inside one process in a test. A product chooses its roads. Nothing above the queue changes.</p>
+<p>This is also how the rule "the screen never breaks" is kept. With no server at all, an app runs from example envelopes bundled with it. A founder can see their own words in a working app before any server exists.</p>
+
+<h2>Changing it</h2>
+<p>The contract has a version with two numbers. Adding an optional field or a new type moves the second. Removing or renaming anything moves the first. An app ignores fields it does not know, so a newer server does not break an older app.</p>
+<p>The order of work is fixed and written down: the contract's document changes first, then the schemas and examples, then the code. The reverse order, code first and the contract catching up, is how two sides of a system drift apart.</p>
+
+<h2>Why one shape</h2>
+<p>Because everything is an envelope, everything that handles envelopes is written once: the queue, the retry, the duplicate check, the log line, the test that replays a conversation. And any server, in any language, that passes the conformance tests can drive any tantr app. The contract is the product. The apps are evidence that it works.</p>
+
+<p>How a new product is made from all this is <a href="../the-generator/">the next article</a>.</p>

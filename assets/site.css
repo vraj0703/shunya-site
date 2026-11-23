@@ -1,9 +1,13 @@
-/* Waitlist pages for Shunya Systems and tantr. One sheet, two brands: a page sets
-   data-brand on <html> and the accent follows. Dark, two columns, nothing fetched. */
+/* The Shunya Systems and tantr pages. One sheet, two brands: a page sets data-brand on <html> and
+   the accent follows. Dark, nothing fetched. The first page follows Vishal's wireframe (one screen:
+   mark and name, what it is, Request access, four article links on the left; the animated panel
+   on the right); the articles are one readable column. */
 :root {
   --bg: #050505; --ink: #f5f3ee; --soft: #8e8b84; --line: #2a2926; --chip: #171614;
+  --body: #d6d2c9;
   --accent: #d9a441; --accent-2: #f3d58a; --on-accent: #14110a;
   --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Inter, Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 }
 :root[data-brand="tantr"] { --accent: #ff5a36; --accent-2: #ffb199; --on-accent: #190803; }
 * { box-sizing: border-box; }
@@ -11,23 +15,103 @@ html, body { height: 100%; }
 body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--sans);
   -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
 a { color: inherit; }
-.page { min-height: 100dvh; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; padding: 20px; }
-.copy { display: flex; flex-direction: column; padding: 0 clamp(12px, 3.2vw, 46px); min-width: 0; }
-.top { display: flex; align-items: center; justify-content: space-between; height: 44px; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 8px; }
+
 .brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 650; letter-spacing: -0.01em; font-size: 18px; text-decoration: none; }
-.brand svg { width: 24px; height: 24px; color: var(--accent); }
-.pill-link { background: var(--chip); border-radius: 12px; padding: 10px 16px; font-size: 15px; text-decoration: none; transition: background .15s; }
-.pill-link:hover, .pill-link:focus-visible { background: #24221f; }
-.hero { margin: auto 0; padding: 48px 0; max-width: 560px; }
-.badge { display: inline-block; background: var(--chip); color: #b9b5ac; border-radius: 10px; padding: 7px 10px; font-size: 15px; font-weight: 550; letter-spacing: -0.01em; }
-h1 { font-size: clamp(42px, 6.1vw, 68px); line-height: 1.02; letter-spacing: -0.045em; font-weight: 550; margin: 18px 0 20px; }
-h1 em { font-style: normal; color: var(--accent); }
-.lede { color: var(--soft); font-size: clamp(16px, 1.45vw, 18px); line-height: 1.35; margin: 0 0 28px; max-width: 30em; }
-form.join { display: flex; align-items: center; gap: 6px; max-width: 420px; border: 1px solid var(--line); border-radius: 16px; padding: 5px; background: #0b0b0a; transition: border-color .15s; }
+.brand svg { width: 24px; height: 24px; color: var(--accent); flex: none; }
+
+/* -- The first page --------------------------------------------------------------------------- */
+/* The wireframe's page is 548 x 322: the left column about 46 % of the width, the panel about 43 %
+   and nearly the full height, margins all round. It fits one screen on a desktop, and reads as
+   the portfolio frame's picture at 1424 x 1024. */
+.home { height: 100dvh; min-height: 560px; display: grid;
+  grid-template-columns: 46% 43%; grid-template-rows: minmax(0, 1fr) auto;
+  grid-template-areas: "copy panel" "foot panel"; justify-content: space-between;
+  padding: clamp(16px, 3.6vh, 44px) clamp(20px, 4.2vw, 68px); }
+.home .copy { grid-area: copy; display: flex; flex-direction: column; min-width: 0; min-height: 0; }
+.id { display: flex; align-items: center; gap: 0.36em; margin: 0; font-size: clamp(30px, 3.5vw, 56px);
+  line-height: 1; letter-spacing: -0.035em; font-weight: 600; }
+.id .brand { font-size: inherit; }
+.id .brand svg { width: 1em; height: 1em; }
+.pitch { margin: auto 0; display: flex; flex-direction: column; gap: clamp(18px, 3.4vh, 40px); padding: 24px 0; }
+.lede { font-size: clamp(19px, 2.05vw, 31px); line-height: 1.32; letter-spacing: -0.012em; color: var(--body); margin: 0; }
+button.ask { width: 100%; height: clamp(52px, 7vh, 76px); border: 0; border-radius: 14px; background: var(--accent);
+  color: var(--on-accent); font: inherit; font-size: clamp(17px, 1.45vw, 22px); font-weight: 650; letter-spacing: -0.01em;
+  cursor: pointer; transition: background .15s, transform .05s; }
+button.ask:hover { background: var(--accent-2); }
+button.ask:active { transform: translateY(1px); }
+.reads { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(10px, 1.2vw, 18px); }
+/* The four article links read as links: 15-16 px in the body ink at rest, the brand colour on hover
+   and focus, the hairline above each (both colours clear 4.5:1 on the page, test/e2e.py measures). */
+.reads a { display: block; border-top: 1px solid var(--line); padding-top: 12px; font-size: clamp(15px, 1.12vw, 16px);
+  font-weight: 500; line-height: 1.3; color: var(--body); text-decoration: none; transition: color .15s, border-color .15s; }
+.reads a:hover, .reads a:focus-visible { color: var(--accent); border-color: var(--accent); }
+.home .panel { grid-area: panel; }
+.home .foot { grid-area: foot; }
+
+.panel { position: relative; border-radius: 22px; overflow: hidden; background: #000; min-height: 320px; }
+.panel canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.foot { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px 14px;
+  color: var(--soft); font-size: 13px; padding-top: 10px; }
+.foot nav { display: flex; flex-wrap: wrap; gap: 14px; }
+.foot a { text-decoration: none; }
+.foot a:hover, .foot a:focus-visible { color: var(--ink); }
+
+/* -- An article ------------------------------------------------------------------------------- */
+/* A readable measure: about 68 characters, 18 px on a desktop, 17 on a phone. */
+.reading { max-width: calc(68ch + 48px); margin: 0 auto; padding: 18px 24px 36px; }
+.top { display: flex; align-items: center; justify-content: space-between; height: 52px; }
+.read { font-size: 18px; line-height: 1.62; color: var(--body); }
+.read h1 { font-size: clamp(32px, 4.4vw, 48px); line-height: 1.08; letter-spacing: -0.035em; font-weight: 600; color: var(--ink); margin: 40px 0 14px; }
+.read .summary { font-size: 1.16em; line-height: 1.45; color: var(--ink); margin: 0 0 10px; }
+.read .meta { font-size: 15px; color: var(--soft); margin: 0 0 34px; }
+.read h2 { font-size: 1.32em; line-height: 1.25; letter-spacing: -0.02em; font-weight: 600; color: var(--ink); margin: 2em 0 .6em; }
+.read h3 { font-size: 1.1em; color: var(--ink); margin: 1.6em 0 .5em; }
+.read p, .read ul, .read ol { margin: 0 0 1.05em; }
+.read li { margin: .3em 0; }
+.read a { color: var(--accent-2); }
+.read strong { color: var(--ink); }
+.read blockquote { margin: 1.5em 0; padding: .1em 0 .1em 1em; border-left: 3px solid var(--accent); color: var(--ink); }
+.read code { font-family: var(--mono); font-size: .88em; background: var(--chip); padding: .1em .35em; border-radius: 6px; }
+.read pre { background: var(--chip); padding: 14px 16px; border-radius: 12px; overflow-x: auto; }
+.read pre code { background: none; padding: 0; }
+.read table { display: block; overflow-x: auto; width: 100%; border-collapse: collapse; font-size: .9em; margin: 1.4em 0; }
+.read th, .read td { border-bottom: 1px solid var(--line); padding: .5em .7em; text-align: left; vertical-align: top; }
+.read th { color: var(--ink); font-weight: 600; }
+.read figure { margin: 1.8em 0; }
+.read figcaption { font-size: .85em; color: var(--soft); margin-top: .6em; }
+.read img, .read svg { max-width: 100%; height: auto; }
+.end { margin: 52px 0 28px; }
+.end .ask { max-width: 420px; }
+.pager { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 0 0 28px; }
+.pager a { display: block; min-height: 48px; border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px;
+  text-decoration: none; line-height: 1.3; transition: border-color .15s; }
+.pager a:hover, .pager a:focus-visible { border-color: var(--accent); }
+.pager a span { display: block; font-size: 13px; color: var(--soft); margin-bottom: 4px; }
+.pager a[rel="next"] { grid-column: 2; text-align: right; }
+.reading .foot { border-top: 1px solid var(--line); padding-top: 16px; }
+
+/* -- Request access (SHUNY-13) ---------------------------------------------------------------- */
+dialog.request { width: min(480px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); overflow: auto;
+  border: 1px solid var(--line); border-radius: 20px; background: #0b0b0a; color: var(--ink); padding: 20px 22px 18px; }
+dialog.request::backdrop { background: rgba(0, 0, 0, .68); }
+.request-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.request-head h2 { margin: 0; font-size: 22px; letter-spacing: -0.02em; font-weight: 600; }
+.request-head form { margin: 0; }
+button.x { width: 48px; height: 48px; margin-right: -10px; border: 0; border-radius: 12px; background: transparent;
+  color: var(--soft); font-size: 28px; line-height: 1; cursor: pointer; }
+button.x:hover { color: var(--ink); }
+form.join { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; border: 1px solid var(--line); border-radius: 16px;
+  padding: 5px; background: #0b0b0a; transition: border-color .15s; }
 form.join:focus-within { border-color: var(--accent); }
-form.join input[type=email] { flex: 1; min-width: 0; background: transparent; border: 0; outline: 0; color: var(--ink); font: inherit; font-size: 16px; padding: 10px 12px; }
+form.join input.field { flex: 1; min-width: 0; background: transparent; border: 0; outline: 0; color: var(--ink); font: inherit; font-size: 16px; padding: 10px 12px; }
 form.join input::placeholder { color: #6b6862; }
-form.join button { border: 0; border-radius: 11px; background: var(--ink); color: #0a0a0a; font: inherit; font-size: 16px; font-weight: 550; padding: 10px 26px; cursor: pointer; transition: background .15s, transform .05s; }
+/* The e-mail and the name each take a line of the box; the reason shares the last with the button. */
+form.join input.field.wide { flex-basis: 100%; border-bottom: 1px solid var(--line); border-radius: 0; }
+form.join input.field:not(.wide) { flex-basis: 12em; }
+form.join input:focus-visible { outline: 0; }
+form.join button { border: 0; border-radius: 11px; background: var(--ink); color: #0a0a0a; font: inherit; font-size: 16px; font-weight: 550;
+  padding: 10px 22px; min-height: 44px; cursor: pointer; transition: background .15s, transform .05s; }
 form.join button:hover { background: var(--accent-2); }
 form.join button:active { transform: translateY(1px); }
 form.join button[disabled] { opacity: .6; cursor: progress; }
@@ -35,23 +119,28 @@ form.join button[disabled] { opacity: .6; cursor: progress; }
 .note { min-height: 22px; margin: 14px 2px 0; font-size: 14.5px; color: var(--soft); }
 .note[data-kind="ok"] { color: var(--accent-2); }
 .note[data-kind="err"] { color: #ff8f7a; }
-.facts { display: flex; flex-wrap: wrap; gap: 8px; margin: 26px 0 0; padding: 0; list-style: none; }
-.facts li { border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; font-size: 13.5px; color: #b9b5ac; }
-.foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; color: var(--soft); font-size: 14.5px; height: 44px; }
-.foot nav { display: flex; gap: 16px; }
-.foot a { text-decoration: none; }
-.foot a:hover, .foot a:focus-visible { color: var(--ink); }
-.panel { position: relative; border-radius: 22px; overflow: hidden; background: #000; min-height: 320px; }
-.panel canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
-:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 8px; }
-form.join input:focus-visible { outline: 0; }
+.fine { margin: 6px 2px 0; font-size: 13px; }
+.fine a { color: var(--soft); }
+
+/* -- Privacy and the like --------------------------------------------------------------------- */
 .prose { max-width: 680px; margin: 0 auto; padding: 40px 24px 80px; line-height: 1.55; color: #d2cfc7; }
 .prose h1 { font-size: 34px; letter-spacing: -0.03em; }
 .prose h2 { font-size: 19px; margin-top: 30px; color: var(--ink); }
+
+/* -- A phone: the same content stacked, the links a 2 x 2 grid of 48 dp rows, then the panel ---- */
 @media (max-width: 860px) {
-  .page { grid-template-columns: 1fr; grid-template-rows: auto minmax(260px, 38vh); padding: 14px; }
-  .copy { padding: 0 6px; }
-  .hero { padding: 40px 0 34px; }
-  .foot { height: auto; padding: 14px 0 6px; flex-wrap: wrap; }
+  .home { height: auto; min-height: 100dvh; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto auto;
+    grid-template-areas: "copy" "panel" "foot"; row-gap: 22px; padding: 18px 16px 14px; }
+  .id { font-size: 30px; }
+  .pitch { margin: 30px 0 0; padding: 0; gap: 22px; }
+  .lede { font-size: 19px; }
+  .reads { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 14px; }
+  .reads a { display: flex; align-items: center; min-height: 48px; padding: 6px 0; font-size: 15px; }
+  .home .panel { height: 46vh; min-height: 260px; }
+  .read { font-size: 17px; }
+  .reading { padding: 12px 16px 28px; }
+  .pager { grid-template-columns: 1fr; }
+  .pager a[rel="next"] { grid-column: 1; }
 }
+@media (max-width: 480px) { form.join button { flex-basis: 100%; } }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }

@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en" data-brand="$brand">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>$page_title</title>
+<meta name="description" content="$summary">
+<meta name="theme-color" content="#050505">
+<link rel="canonical" href="$url">
+<meta property="og:type" content="article">
+<meta property="og:title" content="$title">
+<meta property="og:description" content="$summary">
+<meta property="og:url" content="$url">
+<meta property="og:image" content="$og_image">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="$og_image">
+<link rel="icon" href="/assets/$brand.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+<main class="reading">
+  <header class="top"><a class="brand" href="$home" aria-label="$name, home">$mark<span>$name</span></a></header>
+  <article class="read">
+    <h1>$title</h1>
+    <p class="summary">$summary</p>
+    <p class="meta">$minutes min read</p>
+$body
+  </article>
+  <section class="end">
+    <button class="ask" type="button" data-open-request>Request access</button>
+  </section>
+  <nav class="pager" aria-label="More articles">$pager</nav>
+  <footer class="foot">
+    <span>&copy; 2026 Shunya Systems</span>
+    <nav aria-label="Footer">$footer</nav>
+  </footer>
+</main>
+$request
+<script src="/config.js"></script>
+<script src="/assets/site.js" defer></script>
+</body>
+</html>
